@@ -19,17 +19,9 @@ function handlePost() {
         },
     })
         .then(response => response.json())
-        .then(json => {
-            if (!localStorage.posts) {
-                localStorage.posts = JSON.stringify([json])
-                renderPosts([json])
-            } else {
-                let appendJson = JSON.parse(localStorage.posts)
-                appendJson.push(json)
-                localStorage.posts = JSON.stringify(appendJson)
-                renderPosts(appendJson)
-            }
-        })
+        .then(completJSON)
+        .then(storeJSON)
+        .then(renderPosts)
 }
 
 
@@ -38,14 +30,35 @@ const posts = localStorage.posts ? JSON.parse(localStorage.posts) : []
 renderPosts(posts)
 btn.addEventListener('click', handlePost)
 
+// window.addEventListener('storage', e => {
+//     console.log(e.key)
+// })
+// // localStorage.setItem('test', '123')
+// window.dispatchEvent( new Event('storage') )
+
+
+//##### FUNCTIONS #############
+function completJSON(json) {
+    let value = !localStorage.posts ? [json] : [...JSON.parse(localStorage.posts), json]
+    return Promise.resolve(value)
+}
+
+function storeJSON(data) {
+    localStorage.posts = JSON.stringify(data)
+    return Promise.resolve(data)
+}
+
 function renderPosts(data) {
     deletePosts(footer)
-    // console.log(footer.children.length)
     data.map((body) => {
+        //### CREATING NODES
         const copyCard = card.cloneNode(true)
         copyCard.classList.remove('d-none')
         const cardTitle = copyCard.children[0]
         const cardbody = copyCard.children[1].children[0]
+        console.log(copyCard)
+
+        ///#### ASSIGNING TEXT AND RESETTING TEXT
         cardTitle.innerText = body.title
         cardbody.innerText = body.body
         title.value = ''
