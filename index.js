@@ -7,7 +7,7 @@ const footer = document.querySelector('footer')
 // const cardbody = document.querySelector('.card-body p')
 
 function handlePost() {
-    fetch('https://jsonplaceholder.typicode.com/posts', {
+    fetch('https://jsonplaceholder.typicode.com/posts/1', {
         method: 'POST',
         body: JSON.stringify({
             title: title.value,
@@ -18,10 +18,18 @@ function handlePost() {
             'Content-type': 'application/json; charset=UTF-8',
         },
     })
-        .then(response => response.json())
+        .then(response => {
+            if(!response.ok) {
+                throw new Error(`Status is not okay!`)
+            }
+            return response.json()
+        })
         .then(completJSON)
         .then(storeJSON)
         .then(renderPosts)
+        .catch(e => {
+            alert(e.message)
+        } )
 }
 
 
@@ -29,12 +37,6 @@ function handlePost() {
 const posts = localStorage.posts ? JSON.parse(localStorage.posts) : []
 renderPosts(posts)
 btn.addEventListener('click', handlePost)
-
-// window.addEventListener('storage', e => {
-//     console.log(e.key)
-// })
-// // localStorage.setItem('test', '123')
-// window.dispatchEvent( new Event('storage') )
 
 
 //##### FUNCTIONS #############
@@ -55,7 +57,6 @@ function renderPosts(data) {
         copyCard.classList.remove('d-none')
         const cardTitle = copyCard.children[0]
         const cardbody = copyCard.children[1].children[0]
-        console.log(copyCard)
 
         ///#### ASSIGNING TEXT AND RESETTING TEXT
         cardTitle.innerText = body.title
