@@ -29,14 +29,12 @@ btn.addEventListener('click', () => {
 
 //##### FUNCTIONS #############
 function completJSON(json) {
-    // let value = !localStorage.posts ? [json] : [...JSON.parse(localStorage.posts), json]
-    let value = [...JSON.parse(localStorage.posts || '[]'), json]  
-    return Promise.resolve(value)
+    return value = [...JSON.parse(localStorage.posts || '[]'), json]  
 }
 
 function storeJSON(data) {
     localStorage.posts = JSON.stringify(data)
-    return Promise.resolve(data)
+    return data
 }
 
 function renderPosts(data) {
