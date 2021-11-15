@@ -7,24 +7,35 @@ const footer = document.querySelector('footer')
 // const cardbody = document.querySelector('.card-body p')
 
 async function handlePost() {
-    return await fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        body: JSON.stringify({
-            title: title.value,
-            body: post.value,
-            userId: 1,
-        }),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-        },
-    })
-        .then(response => response.json())
+    try {
+        let response = await fetch('https://jsonplaceholder.typicode.com/posts/', {
+            method: 'POST',
+            body: JSON.stringify({
+                title: title.value,
+                body: post.value,
+                userId: 1,
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+
+        if (!response.ok) throw new Error(`Status is not ok`)
+        let jsonObj = await response.json()
+        let processedData = completJSON(jsonObj)
+        let store = storeJSON(processedData)
+        renderPosts(store)
+    } catch(e) {
+        alert(e.message)
+    }
+
+        
 }
 
 const posts = JSON.parse(localStorage.posts || '[]') 
 renderPosts(posts)
 btn.addEventListener('click', () => {
-    handlePost().then(completJSON).then(storeJSON).then(renderPosts)
+    handlePost()
 })
 
 //##### FUNCTIONS #############
