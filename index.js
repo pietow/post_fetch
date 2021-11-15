@@ -6,8 +6,8 @@ const footer = document.querySelector('footer')
 // const cardTitle = document.querySelector('.card-header')
 // const cardbody = document.querySelector('.card-body p')
 
-function handlePost() {
-    fetch('https://jsonplaceholder.typicode.com/posts', {
+async function handlePost() {
+    return await fetch('https://jsonplaceholder.typicode.com/posts', {
         method: 'POST',
         body: JSON.stringify({
             title: title.value,
@@ -19,27 +19,18 @@ function handlePost() {
         },
     })
         .then(response => response.json())
-        .then(completJSON)
-        .then(storeJSON)
-        .then(renderPosts)
 }
 
-
-
-const posts = localStorage.posts ? JSON.parse(localStorage.posts) : []
+const posts = JSON.parse(localStorage.posts || '[]') 
 renderPosts(posts)
-btn.addEventListener('click', handlePost)
-
-// window.addEventListener('storage', e => {
-//     console.log(e.key)
-// })
-// // localStorage.setItem('test', '123')
-// window.dispatchEvent( new Event('storage') )
-
+btn.addEventListener('click', () => {
+    handlePost().then(completJSON).then(storeJSON).then(renderPosts)
+})
 
 //##### FUNCTIONS #############
 function completJSON(json) {
-    let value = !localStorage.posts ? [json] : [...JSON.parse(localStorage.posts), json]
+    // let value = !localStorage.posts ? [json] : [...JSON.parse(localStorage.posts), json]
+    let value = [...JSON.parse(localStorage.posts || '[]'), json]  
     return Promise.resolve(value)
 }
 
@@ -56,7 +47,6 @@ function renderPosts(data) {
         copyCard.classList.remove('d-none')
         const cardTitle = copyCard.children[0]
         const cardbody = copyCard.children[1].children[0]
-        console.log(copyCard)
 
         ///#### ASSIGNING TEXT AND RESETTING TEXT
         cardTitle.innerText = body.title
